@@ -1,0 +1,5 @@
+cmake_with_ssl.patch
+use_cmake_package.patch
+disable-test-basic.patch
+ssl-remove-reference-to-FIPS_set_mode.patch
+server_flag_deprecation.patch

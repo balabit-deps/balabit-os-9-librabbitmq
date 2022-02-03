@@ -1,0 +1,42 @@
+From 637f0275ffcc2bfb58c94f0bf6e290aa40c1695a Mon Sep 17 00:00:00 2001
+From: Alan Antonuk <alan.antonuk@gmail.com>
+Date: Fri, 7 Aug 2020 05:07:50 +0000
+Subject: [PATCH] tool: set port when not specified in --server flag
+
+Set the port to 5672 and 5671 in SSL mode in the tools when the --server
+flag is used, but does not specify a port.
+
+From 54d00bee5cc4603dc96af5f86c899210689dfeeb Mon Sep 17 00:00:00 2001
+From: Alan Antonuk <alan.antonuk@gmail.com>
+Date: Sun, 9 Aug 2020 06:44:28 +0000
+Subject: [PATCH] tool: fix issue parsing hostname in --server flag
+
+Set both the host and port when a ':' isn't found in in the --server
+flag.  The attempted fix in #622 was not complete as the host was not
+properly set.
+
+Fixes: #621
+
+Origin: upstream;
+        https://github.com/alanxz/rabbitmq-c/commit/637f0275ffcc2bfb58c94f0bf6e290aa40c1695a
+        https://github.com/alanxz/rabbitmq-c/commit/4d03c849868231dc217785c6f0e78eab9cd79fd5
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/librabbitmq/+bug/1888313
+Last-Updated: 2022-01-19
+
+--- a/tools/common.c
++++ b/tools/common.c
+@@ -240,6 +240,14 @@
+       if (ci->port < 0 || ci->port > 65535 || port_end == colon + 1 ||
+           *port_end != 0)
+         die("bad server port number in '%s'", amqp_server);
++    } else {
++      ci->host = amqp_server;
++      ci->port = 5672;
++#if WITH_SSL
++      if (amqp_ssl) {
++        ci->port = 5671;
++      }
++#endif
+     }
+ 
+ #if WITH_SSL

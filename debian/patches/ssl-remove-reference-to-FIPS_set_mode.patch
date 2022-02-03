@@ -1,0 +1,37 @@
+From 23856b8cce06d0ed0a4e65f46bde27df409fe9f6 Mon Sep 17 00:00:00 2001
+From: Alan Antonuk <alan.antonuk@gmail.com>
+Date: Fri, 5 Mar 2021 06:44:15 +0000
+Subject: [PATCH] ssl: remove reference to FIPS_set_mode
+Origin: https://github.com/alanxz/rabbitmq-c/pull/657
+
+This was cargo-culted from the OpenSSL wiki for uninitializing OpenSSL.
+This API has been removed v3.x and newer of OpenSSL, additionally
+rabbitmq-c doesn't use FIPS mode, so this is likely a no-op even using
+older OpenSSL.
+
+Fixes #654
+Fixes #627
+
+Signed-off-by: GitHub <noreply@github.com>
+---
+ librabbitmq/amqp_openssl.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/librabbitmq/amqp_openssl.c b/librabbitmq/amqp_openssl.c
+index 0a37fe0..3cebd58 100644
+--- a/librabbitmq/amqp_openssl.c
++++ b/librabbitmq/amqp_openssl.c
+@@ -753,10 +753,6 @@ int amqp_uninitialize_ssl_library(void) {
+   ERR_remove_state(0);
+ #endif
+ 
+-#ifndef LIBRESSL_VERSION_NUMBER
+-  FIPS_mode_set(0);
+-#endif
+-
+   CRYPTO_set_locking_callback(NULL);
+   CRYPTO_set_id_callback(NULL);
+   {
+-- 
+2.32.0
+
